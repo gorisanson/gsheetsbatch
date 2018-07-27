@@ -61,10 +61,19 @@ class Spreadsheet:
             self._spreadsheet.json = request.execute()
 
         def get_sheets(self):
+            """Returns a list of Sheet objects of this Spreadsheet object.
+
+            :returns: list of Sheet objects
+            """
             sheets_json = self._spreadsheet.json['sheets']
             return [Sheet(self._spreadsheet, sheet_json) for sheet_json in sheets_json]
 
         def get_sheet_by_id(self, sheet_id):
+            """Returns a Sheet object whose sheet id is sheet_id.
+
+            :param sheet_id: int
+            :returns: Sheet object
+            """
             sheets_json = self._spreadsheet.json['sheets']
             for sheet_json in sheets_json:
                 if sheet_json['properties']['sheetId'] == sheet_id:
@@ -74,6 +83,11 @@ class Spreadsheet:
                                  "Please consider to do refresh_cache before")
 
         def get_sheet_by_index(self, index):
+            """Returns a Sheet object whose index is index.
+
+            :param index: int
+            :returns: Sheet object
+            """
             sheets_json = self._spreadsheet.json['sheets']
             return Sheet(self._spreadsheet, sheets_json[index])
 
@@ -96,7 +110,7 @@ class Spreadsheet:
             self._spreadsheet = spreadsheet
             self.sheet_ids_requested_to_add = []
 
-        def request_update_spreadsheet_title(self, title):
+        def update_spreadsheet_title(self, title):
             """Deposit a request to update title of spreadsheet to the title
 
             :param title: str
@@ -111,7 +125,7 @@ class Spreadsheet:
             }
             self._spreadsheet.client.requests_container.deposit(self._spreadsheet.spreadsheet_id, request)
 
-        def request_add_new_sheet(self):
+        def add_new_sheet(self):
             """Deposit a request to add a new sheet.
             the created new sheet has sheet id which is the least natural number (including 0) not in current sheet ids.
 
@@ -324,7 +338,7 @@ class Sheet:
         def __init__(self, sheet):
             self._sheet = sheet
 
-        def request_insert_row_or_column(self, dimension, start_index, end_index, inherit_from_before=True):
+        def insert_row_or_column(self, dimension, start_index, end_index, inherit_from_before=True):
             """Deposit a request to insert rows or columns.
 
             dimension: str ('COLUMNS' or 'ROWS')
@@ -349,7 +363,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_size_row_or_column(self, dimension, start_index, end_index, pixel_size):
+        def size_row_or_column(self, dimension, start_index, end_index, pixel_size):
             """Deposit a request to fix a column width or row height.
 
             dimension: str ('COLUMNS' or 'ROWS')
@@ -379,7 +393,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_hide_grid_lines(self, b):
+        def hide_grid_lines(self, b):
             """Deposit a request to fix the hideGridlines option.
 
             sheet_id: int
@@ -399,7 +413,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_borders(self, min_row, min_col, max_row, max_col, side, style='SOLID', color=None):
+        def update_borders(self, min_row, min_col, max_row, max_col, side, style='SOLID', color=None):
             """Deposit a request to update borders.
 
             sheet_id: int
@@ -432,7 +446,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_borders_around(self, min_row, min_col, max_row, max_col, style='SOLID', color=None):
+        def update_borders_around(self, min_row, min_col, max_row, max_col, style='SOLID', color=None):
             """Deposit requests_container to update borders around.
 
             sheet_id: int
@@ -445,15 +459,15 @@ class Sheet:
 
             returns; None
             """
-            self.request_update_borders(min_row, min_col, max_row, max_col, 'top', style, color)
-            self.request_update_borders(min_row, min_col, max_row, max_col, 'right', style, color)
-            self.request_update_borders(min_row, min_col, max_row, max_col, 'bottom', style, color)
-            self.request_update_borders(min_row, min_col, max_row, max_col, 'left', style, color)
+            self.update_borders(min_row, min_col, max_row, max_col, 'top', style, color)
+            self.update_borders(min_row, min_col, max_row, max_col, 'right', style, color)
+            self.update_borders(min_row, min_col, max_row, max_col, 'bottom', style, color)
+            self.update_borders(min_row, min_col, max_row, max_col, 'left', style, color)
 
-        def request_update_cells_default_format(self, min_row, min_col, max_row, max_col,
+        def update_cells_default_format(self, min_row, min_col, max_row, max_col,
                                                 horizontal_alignment='LEFT', vertical_alignment='MIDDLE',
                                                 font_family='Malgun Gothic', font_size=15):
-            """Deposit requests_container to update default formats of cells in the range.
+            """Deposit requests to update default formats of cells in the range.
 
             min_row, min_col, max_row, max_col: int
             horizontal_alignment: str (one of 'LEFT', 'CENTER', 'RIGHT')
@@ -482,8 +496,8 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_cells_text_format(self, min_row, min_col, max_row, max_col, **text_format):
-            """Deposit a requests_container to update text formats of cells in the range.
+        def update_cells_text_format(self, min_row, min_col, max_row, max_col, **text_format):
+            """Deposit requests to update text formats of cells in the range.
 
             min_row, min_col, max_row, max_col: int
             text_format: key: value as follows. (optional)
@@ -515,7 +529,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_cell_note(self, row, col, text):
+        def update_cell_note(self, row, col, text):
             """Deposit request to update note of the cell.
 
             row, column: int
@@ -533,9 +547,9 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_cells_alignment(self, min_row, min_col, max_row, max_col,
+        def update_cells_alignment(self, min_row, min_col, max_row, max_col,
                                            horizontal_alignment, vertical_alignment='MIDDLE'):
-            """Deposit requests_container to update default formats of cells in the range.
+            """Deposit requests to update default formats of cells in the range.
 
             sheet_id:  int
             min_row, min_col, max_row, max_col: int
@@ -563,8 +577,8 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_cells_background_color(self, min_row, min_col, max_row, max_col, color):
-            """Deposit requests_container to update cells background color.
+        def update_cells_background_color(self, min_row, min_col, max_row, max_col, color):
+            """Deposit requests to update cells background color.
 
 
             sheet_id: int
@@ -586,7 +600,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_cells_foreground_color(self, min_row, min_col, max_row, max_col, color):
+        def update_cells_foreground_color(self, min_row, min_col, max_row, max_col, color):
             """Deposit requests_container to update cells foreground color.
             foreground color 란 글자 색을 말한다.
 
@@ -612,10 +626,10 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_cell_value(self, row, col, values_list_list, type, **text_format):
-            """Deposit requests_container to update cells which started with (row, col).
-            value_list_list must be a list of lists.
-            values_list_list[i][j] corresponds to (row+i-1, col+j-1) cell.
+        def update_cells_values(self, row, col, values_list_list, type, **text_format):
+            """Deposit requests to update cells which starts with (row, col).
+            values_list_list must be a list of lists.
+            values_list_list[i][j] corresponds to value of (row+i-1, col+j-1) cell.
 
             :param row: int
             :param col: int
@@ -669,10 +683,10 @@ class Sheet:
 
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_cells_text_format_runs(self, min_row, min_col, max_row, max_col, start_index,
+        def update_cells_text_format_runs(self, min_row, min_col, max_row, max_col, start_index,
                                                   end_index=None,
                                                   **text_format):
-            """Deposit requests_container to update cells' text format runs from start_index to end_index.
+            """Deposit requests to update cells' text format runs from start_index to end_index.
             If end_index is not specified or None, this run continues to the end.
 
             min_row, min_col, max_row, max_col: int
@@ -714,7 +728,7 @@ class Sheet:
 
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_merge_cells(self, min_row, min_col, max_row, max_col, merge_type='MERGE_ALL'):
+        def merge_cells(self, min_row, min_col, max_row, max_col, merge_type='MERGE_ALL'):
             """Deposit a request to merge cells.
 
             sheet_id:
@@ -737,7 +751,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_unmerge_cells(self, min_row, min_col, max_row, max_col):
+        def unmerge_cells(self, min_row, min_col, max_row, max_col):
             """Deposit a request to unmerge cells.
 
             sheet_id:
@@ -755,7 +769,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_cells_data_validation_rule(self, min_row, min_col, max_row, max_col, rule):
+        def update_cells_data_validation_rule(self, min_row, min_col, max_row, max_col, rule):
             """Deposit a request to update cells data validation rule.
 
             sheet_id: int
@@ -775,7 +789,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_sheet_title(self, title):
+        def update_sheet_title(self, title):
             """Deposit a request to update sheet title.
 
             title: string
@@ -792,7 +806,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_add_conditional_format_rule(self, min_row, min_col, max_row, max_col, type, rule, index=0):
+        def add_conditional_format_rule(self, min_row, min_col, max_row, max_col, type, rule, index=0):
             """Deposit a request to add conditional format rule
 
             min_row, min_col, max_row, max_col: int
@@ -816,7 +830,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_delete_conditional_format_rule(self, index):
+        def delete_conditional_format_rule(self, index):
             """Deposit a request to delete conditional format rule indicated by zero-based index.
             All subsequent rules' indexes are decremented.
 
@@ -831,7 +845,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_cells_number_format(self, min_row, min_col, max_row, max_col, type, pattern=None):
+        def update_cells_number_format(self, min_row, min_col, max_row, max_col, type, pattern=None):
             """Deposit a request to add conditional format rule
 
             min_row, min_col, max_row, max_col: int
@@ -874,7 +888,7 @@ class Sheet:
                 }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_add_sheet_protection(self):
+        def add_sheet_protection(self):
             assert self._sheet.client.google_account_email
             request = {
                 'addProtectedRange': {
@@ -895,7 +909,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_add_sheet_protection_except_unprotected_range(self, min_row, min_col, max_row, max_col):
+        def add_sheet_protection_except_unprotected_range(self, min_row, min_col, max_row, max_col):
             """Deposit a request to add whole sheet protection except the specified range.
 
             min_row, min_col, max_row, max_col: int
@@ -924,7 +938,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_add_sheet_protection_except_unprotected_ranges(self, unprotected_ranges):
+        def add_sheet_protection_except_unprotected_ranges(self, unprotected_ranges):
             """Deposit a request to add whole sheet protection except the specified ranges.
 
             unprotected_ranges: list of dicts {'min_row': min_row, 'min_col': min_col,
@@ -954,7 +968,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_delete_sheet_protection(self, protected_range_id):
+        def delete_sheet_protection(self, protected_range_id):
             """Deposit a request to delete sheet protection whose id is protected_range_id.
 
             protected_range_id: int
@@ -967,7 +981,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_cells_wrap_strategy(self, min_row, min_col, max_row, max_col, wrap_strategy):
+        def update_cells_wrap_strategy(self, min_row, min_col, max_row, max_col, wrap_strategy):
             """
             Request to update cells WrapStrategy.
 
@@ -989,7 +1003,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_delete_dimension(self, dimension, min_index, max_index):
+        def delete_dimension(self, dimension, min_index, max_index):
             """Request to delete specified dimension(행 전체 또는 열 전체)
 
             dimension: str (one of ROWS, COLUMNS)
@@ -1008,7 +1022,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_frozen_row_count(self, count):
+        def update_frozen_row_count(self, count):
             """Request to update frozen row count (행 고정)
 
             count: int
@@ -1027,7 +1041,7 @@ class Sheet:
             }
             self._sheet.client.requests_container.deposit(self._sheet.parent_spreadsheet.spreadsheet_id, request)
 
-        def request_update_sheet_hidden(self, is_hidden):
+        def update_sheet_hidden(self, is_hidden):
             """Request to update sheet's hidden state.
 
             is_hidden: boolean

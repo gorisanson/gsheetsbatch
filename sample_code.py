@@ -65,9 +65,9 @@ def sample_write():
     sheet = ss.read_cache.get_sheet_by_index(0)    # get first sheet
 
     # deposit requests
-    sheet.deposit_request.request_update_cell_value(row=2, col=2, values_list_list=[[1, 2, 3], [4, 5, 6], [7, 8, 9]],
-                                                    type='numberValue')
-    sheet.deposit_request.request_update_borders_around(min_row=2, min_col=2, max_row=4, max_col=4, style='SOLID')
+    sheet.deposit_request.update_cells_values(row=2, col=2, values_list_list=[[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+                                                      type='numberValue')
+    sheet.deposit_request.update_borders_around(min_row=2, min_col=2, max_row=4, max_col=4, style='SOLID')
 
     # execute deposited requests
     client.execute_all_deposited_requests()

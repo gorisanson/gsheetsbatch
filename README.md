@@ -64,8 +64,8 @@ value = sheet.read_cache.value_of_cell(row=2, col=3)
 print(value) # prints "Who?"
 
 # some codes deposit and execute writing to cell C2
-sheet.deposit_request.request_update_cell_value(row=2, col=3, values_list_list=[['Me!']],
-                                              type='stringValue')
+sheet.deposit_request.update_cells_values(row=2, col=3, values_list_list=[['Me!']],
+                                          type='stringValue')
 client.execute_all_deposited_requests()
 
 # If you want to read the newly written value of cell C2
@@ -101,11 +101,11 @@ values_list_list = [
 
 # deposit a request to write the 2D list above
 # to the 3x4 range "B2:D4" whose left-top cell is B2 (row:2, col:2)
-sheet.deposit_request.request_update_cell_value(row=2, col=2, values_list_list=values_list_list,
-                                                type='numberValue')
+sheet.deposit_request.update_cells_values(row=2, col=2, values_list_list=values_list_list,
+                                          type='numberValue')
 
 # deposit a request to draw solid borders around the 3x4 range "B2:D4".
-sheet.deposit_request.request_update_borders_around(min_row=2, min_col=2, max_row=4, max_col=5,
+sheet.deposit_request.update_borders_around(min_row=2, min_col=2, max_row=4, max_col=5,
                                                     style='SOLID')
 
 # excecute all deposited requests!
