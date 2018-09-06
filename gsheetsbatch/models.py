@@ -334,6 +334,23 @@ class Sheet:
                         t.append((row, col))
             return t
 
+        def border_style_of_cell(self, row, col, side):
+            """Returns style of border on the side.
+
+            :param side: str (one of 'top', 'bottom', 'left', 'right')
+
+            :return: str (one of None, 'DOTTED', 'DASHED', 'SOLID', 'SOLID_MEDIUM', 'SOLID_THICK', 'DOUBLE')
+            """
+            if side not in ('top', 'bottom', 'left', 'right'):
+                raise ValueError("side should be one of 'top', 'bottom', 'left', 'right', but '{}'.".format(side))
+            sheet = self._sheet.json
+            try:
+                border_style = sheet['data'][0]['rowData'][row - 1]['values'][col - 1] \
+                ['effectiveFormat']['borders'][side]['style']
+            except KeyError:
+                border_style = None
+            return border_style
+
     class RequestDepositor:
         def __init__(self, sheet):
             self._sheet = sheet
@@ -378,7 +395,7 @@ class Sheet:
             request = {
                 'updateDimensionProperties': {
                     'range': {
-                        'sheetId': self._sheet.parent_spreadsheet.spreadsheet_id,
+                        'sheetId': self._sheet.sheet_id,
                         'dimension': dimension,
                         # google api는 zero based index를 사용하고, min쪽은 inclusive,
                         # max 쪽은 excluive를 사용하기에 아래와 같이 조정해서 대입해야한다.
@@ -403,7 +420,7 @@ class Sheet:
             request = {
                 'updateSheetProperties': {
                     'properties': {
-                        'sheetId': self._sheet.parent_spreadsheet.spreadsheet_id,
+                        'sheetId': self._sheet.sheet_id,
                         'gridProperties': {
                             'hideGridlines': b
                         }
