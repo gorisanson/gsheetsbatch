@@ -25,7 +25,7 @@ pip install oauth2client
 ```
 
 3. [Move ***client_secret.json*** file to
-    the working directory.](https://developers.google.com/sheets/api/quickstart/python)
+    the current working directory.](https://developers.google.com/sheets/api/quickstart/python)
 
 4. Start using this wrapper:
 
